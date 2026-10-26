@@ -32,9 +32,9 @@ Complexivo_Practico/
 │   └── figures/                   # Gráficos generados durante el análisis
 ├── docs/                          # Archivos de inventario y documentación auxiliar
 ├── data.py                        # Generación del dataset sintético
-├── limpieza_c.py                  # Limpieza del dataset
+├── limpieza.py                  # Limpieza del dataset
 ├── correlacion.py                 # Análisis y gráficos
-├── export_c.py                    # Entrenamiento y exportación del modelo final
+├── export.py                    # Entrenamiento y exportación del modelo final
 ├── 4models.py                     # Comparación general de modelos
 ├── model5v.py                     # Evaluación del escenario de 5 variables
 ├── model6v.py                     # Evaluación de los escenarios de 6 variables
