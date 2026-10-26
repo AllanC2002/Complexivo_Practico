@@ -1,11 +1,9 @@
 import pandas as pd
 import numpy as np
 
-# =====================================================================
 # 1. CARGA Y CONFIGURACIÓN DE AUDITORÍA
-# =====================================================================
 
-df = pd.read_csv('clientes_solicitud_credito.csv')
+df = pd.read_csv('data/raw/clientes_solicitud_credito.csv')
 
 auditoria = []
 
@@ -39,9 +37,7 @@ if faltantes:
 print("Dimensiones iniciales:", df.shape)
 
 
-# =====================================================================
 # 2. ELIMINACIÓN DE REGISTROS SIN TARGET
-# =====================================================================
 
 nulos_target = int(df['estado_default'].isnull().sum())
 
@@ -57,9 +53,7 @@ if not df['estado_default'].isin([0, 1]).all():
     raise ValueError("El target contiene valores distintos de 0 y 1.")
 
 
-# =====================================================================
 # 3. ESTANDARIZACIÓN DE TIPO DE VIVIENDA
-# =====================================================================
 
 vivienda_original = df['tipo_vivienda'].astype('string')
 
@@ -109,11 +103,7 @@ registrar(
     nulos_vivienda
 )
 
-
-# =====================================================================
 # 4. CORRECCIÓN DE INCONSISTENCIAS Y OUTLIERS
-# =====================================================================
-
 # 4.1 Edad
 
 edades_validas = df.loc[
@@ -152,8 +142,6 @@ registrar(
     nulos_edad,
     f'Mediana = {mediana_edad:.2f}'
 )
-
-
 # 4.2 Ingresos
 
 ingresos_bajos = int((
@@ -195,8 +183,6 @@ registrar(
     ingresos_extremos,
     f'Límite = ${limite_ingreso:.2f}'
 )
-
-
 # 4.3 Monto solicitado
 
 montos_negativos = int((
@@ -214,8 +200,6 @@ registrar(
     'Montos negativos convertidos en nulos',
     montos_negativos
 )
-
-
 # 4.4 Ratio deuda-ingreso
 
 dti_negativos = int((
@@ -233,8 +217,6 @@ registrar(
     'Valores negativos convertidos en nulos',
     dti_negativos
 )
-
-
 # 4.5 Variables de conteo
 
 columnas_conteo = [
@@ -256,8 +238,6 @@ for columna in columnas_conteo:
         'Valores negativos convertidos en nulos',
         negativos
     )
-
-
 # 4.6 Score de buró
 
 scores_invalidos = int((
@@ -275,8 +255,6 @@ registrar(
     'Scores fuera del rango 300-850 convertidos en nulos',
     scores_invalidos
 )
-
-
 # 4.7 Coherencia entre edad y antigüedad laboral
 
 max_meses_posibles = (df['edad_titular'] - 18) * 12
@@ -302,10 +280,7 @@ registrar(
     antiguedades_corregidas
 )
 
-
-# =====================================================================
 # 5. IMPUTACIÓN DE VALORES NULOS
-# =====================================================================
 
 def imputar_mediana(columna, mediana=None, respaldo=None):
 
@@ -341,9 +316,7 @@ imputar_mediana('consultas_buro_ultimos_6m', respaldo=0)
 imputar_mediana('meses_maximo_mora_historica', respaldo=0)
 
 
-# =====================================================================
 # 6. VALIDACIÓN FINAL Y AJUSTES
-# =====================================================================
 
 # Comprobar nuevamente la antigüedad laboral.
 
@@ -363,8 +336,6 @@ registrar(
     'Ajustes finales de consistencia',
     ajustes_finales
 )
-
-
 # Redondear variables enteras.
 
 columnas_enteras = [
@@ -389,10 +360,7 @@ for columna in columnas_enteras:
         valores_no_enteros
     )
 
-
-# =====================================================================
 # 7. REPORTE DE AUDITORÍA Y EXPORTACIÓN
-# =====================================================================
 
 print("\n" + "=" * 75)
 print("AUDITORÍA DE LIMPIEZA")
@@ -424,7 +392,7 @@ print("Scores fuera de 300-850:",
 print("Tasa de default:",
       f"{df['estado_default'].mean():.2%}")
 
-df.to_csv('clientes_solicitud_credito_clean.csv', index=False)
+df.to_csv('data/processed/clientes_solicitud_credito_clean.csv', index=False)
 
-print("\nDataset exportado: clientes_solicitud_credito_clean.csv")
+print("\nDataset exportado: data/processed/clientes_solicitud_credito_clean.csv")
 print("Columnas conservadas:", len(df.columns))

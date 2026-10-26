@@ -22,12 +22,10 @@ from sklearn.metrics import (
     brier_score_loss,
 )
 
-# ============================================================
 # 1. CARGA Y CONFIGURACION
-# ============================================================
 
 BASE_DIR = Path(__file__).resolve().parent
-RUTA_DATOS = BASE_DIR / "clientes_solicitud_credito_clean.csv"
+RUTA_DATOS = BASE_DIR / 'data' / 'processed' / "clientes_solicitud_credito_clean.csv"
 TARGET = "estado_default"
 UMBRAL = 0.5
 TEST_SIZE = 0.20
@@ -69,10 +67,7 @@ METRICAS = [
     "Brier",
 ]
 
-
-# ============================================================
 # 2. VALIDACION Y PREPARACION DE LOS DATOS
-# ============================================================
 
 if not RUTA_DATOS.exists():
     raise FileNotFoundError(
@@ -140,10 +135,7 @@ print(f"Tasa de default total: {y.mean() * 100:.2f}%")
 print("Validacion cruzada:", N_SPLITS, "folds estratificados")
 print("Variables utilizadas:", VARIABLES_8)
 
-
-# ============================================================
 # 3. BINNING OPTIMO Y TRANSFORMACION WoE
-# ============================================================
 
 def transformar_woe(X_ajuste, y_ajuste, X_aplicar, variables):
     """Ajusta los bins con los datos de ajuste y los aplica sin reajustar."""
@@ -176,10 +168,7 @@ def transformar_woe(X_ajuste, y_ajuste, X_aplicar, variables):
 
     return ajuste_woe, aplicar_woe
 
-
-# ============================================================
 # 4. METRICAS
-# ============================================================
 
 def calcular_metricas(y_real, probabilidades):
     probabilidades = np.asarray(probabilidades)
@@ -206,10 +195,7 @@ def calcular_metricas(y_real, probabilidades):
         "Brier": brier_score_loss(y_real, probabilidades),
     }
 
-
-# ============================================================
 # 5. DEFINICION DE LOS MODELOS
-# ============================================================
 
 def crear_modelo(nombre):
     if nombre == "Regresion Logistica L1":
@@ -264,10 +250,7 @@ def crear_modelo(nombre):
 def es_modelo_logistico(nombre):
     return nombre.startswith("Regresion Logistica")
 
-
-# ============================================================
 # 6. VALIDACION CRUZADA ESTRATIFICADA DE 10 FOLDS
-# ============================================================
 
 cv = StratifiedKFold(
     n_splits=N_SPLITS,
@@ -351,16 +334,13 @@ tabla_cv_completa = pd.DataFrame(filas_cv_completas).sort_values(
     ["Escenario", "AUC_media"], ascending=[True, False]
 )
 tabla_cv_completa.to_csv(
-    BASE_DIR / "comparacion_modelos_8_variables.csv",
+    BASE_DIR / 'data' / 'results' / "comparacion_modelos_8_variables.csv",
     index=False,
 )
 
 print("\nArchivo de comparacion guardado: comparacion_modelos_8_variables.csv")
 
-
-# ============================================================
 # 7. SELECCION DEL MODELO DENTRO DEL ESCENARIO
-# ============================================================
 
 def seleccionar_modelo(tabla_cv):
     validos = tabla_cv[
@@ -393,9 +373,7 @@ def seleccionar_modelo(tabla_cv):
     ).iloc[0]["Modelo"]
 
 
-# ============================================================
 # 8. ENTRENAMIENTO FINAL Y EVALUACION EN TEST
-# ============================================================
 
 filas_test = []
 filas_matriz = []
@@ -472,19 +450,17 @@ for nombre_escenario, variables in ESCENARIOS.items():
     )
 
 
-# ============================================================
 # 9. GUARDAR RESULTADOS FINALES
-# ============================================================
 
 tabla_test = pd.DataFrame(filas_test)
 tabla_test.to_csv(
-    BASE_DIR / "resultados_test_8_variables.csv",
+    BASE_DIR / 'data' / 'results' / "resultados_test_8_variables.csv",
     index=False,
 )
 
 tabla_matrices = pd.DataFrame(filas_matriz)
 tabla_matrices.to_csv(
-    BASE_DIR / "matrices_confusion_8_variables.csv",
+    BASE_DIR / 'data' / 'results' / "matrices_confusion_8_variables.csv",
     index=False,
 )
 

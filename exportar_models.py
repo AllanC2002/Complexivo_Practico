@@ -12,9 +12,7 @@ from sklearn.ensemble import RandomForestClassifier
 from xgboost import XGBClassifier
 
 
-# ============================================================
 # 1. CONFIGURACION DEL MODELO DEFINITIVO
-# ============================================================
 
 # Opciones: "5" u "8"
 ESCENARIO = "8"
@@ -42,11 +40,9 @@ VARIABLES_CANDIDATAS = [
 ]
 
 
-# ============================================================
 # 2. CARGAR EL DATASET LIMPIO
-# ============================================================
 
-df = pd.read_csv('clientes_solicitud_credito_clean.csv')
+df = pd.read_csv('data/processed/clientes_solicitud_credito_clean.csv')
 
 df = df.dropna(subset=[TARGET]).copy()
 
@@ -69,9 +65,7 @@ print("Registros utilizados para el entrenamiento final:", len(df))
 print("Tasa de default:", f"{y.mean():.2%}")
 
 
-# ============================================================
 # 3. SELECCION FINAL DE VARIABLES
-# ============================================================
 
 def calcular_iv(variable, target):
 
@@ -122,7 +116,7 @@ if ESCENARIO == "5":
     VARIABLES_FINALES = tabla_iv.head(5)['Variable'].tolist()
 
     tabla_iv.to_csv(
-        'iv_seleccion_final.csv',
+        'data/reference/iv_seleccion_final.csv',
         index=False
     )
 
@@ -142,10 +136,7 @@ for variable in VARIABLES_FINALES:
 
 print("Cantidad de variables:", len(VARIABLES_FINALES))
 
-
-# ============================================================
 # 4. CREAR EL ALGORITMO SELECCIONADO
-# ============================================================
 
 def crear_modelo(nombre):
 
@@ -205,10 +196,7 @@ modelo = crear_modelo(MODELO_FINAL)
 
 USA_WOE = MODELO_FINAL.startswith('Regresion Logistica')
 
-
-# ============================================================
 # 5. BINNING OPTIMO Y TRANSFORMACION WoE
-# ============================================================
 
 binnings = {}
 tablas_binning = []
@@ -251,10 +239,7 @@ else:
     # Los modelos de árboles usan las variables originales.
     X_modelo = X_final.copy()
 
-
-# ============================================================
 # 6. ENTRENAR CON TODA LA DATA ETIQUETADA
-# ============================================================
 
 modelo.fit(X_modelo, y)
 
@@ -263,10 +248,7 @@ print("Algoritmo:", MODELO_FINAL)
 print("Registros utilizados:", len(X_modelo))
 print("Transformacion WoE aplicada:", USA_WOE)
 
-
-# ============================================================
 # 7. EXPORTAR MODELO Y COMPONENTES
-# ============================================================
 
 artefacto = {
     'modelo': modelo,
@@ -287,7 +269,7 @@ nombre_archivo = (
 
 joblib.dump(
     artefacto,
-    nombre_archivo,
+    f"models/{nombre_archivo}",
     compress=3
 )
 
@@ -295,7 +277,7 @@ joblib.dump(
 pd.DataFrame({
     'Variable': VARIABLES_FINALES
 }).to_csv(
-    'variables_modelo_final.csv',
+    'data/reference/variables_modelo_final.csv',
     index=False
 )
 
@@ -308,7 +290,7 @@ if USA_WOE and tablas_binning:
     )
 
     diccionario_woe.to_csv(
-        'diccionario_binning_woe.csv',
+        'data/reference/diccionario_binning_woe.csv',
         index=False
     )
 
@@ -324,7 +306,7 @@ metadata = {
 }
 
 with open(
-    'metadata_modelo_final.json',
+    'models/metadata_modelo_final.json',
     'w',
     encoding='utf-8'
 ) as archivo:

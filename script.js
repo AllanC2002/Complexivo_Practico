@@ -621,8 +621,7 @@ function loadModelMetrics(scenario = appState.currentScenario) {
 
   updateScenarioButtons(appState.currentScenario);
 
-  const filename =
-    `comparacion_modelos_${appState.currentScenario}_variables.csv`;
+  const filename = `data/results/comparacion_modelos_${appState.currentScenario}_variables.csv`;
 
   const message = document.getElementById('model-load-message');
   const tableContainer = document.getElementById('model-table-container');
@@ -1394,7 +1393,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Carga inicial de los datos originales.
   loadDataset(
-    'clientes_solicitud_credito.csv',
+    'data/raw/clientes_solicitud_credito.csv',
     document.querySelector('.source-btn[data-kind="raw"]')
   );
 

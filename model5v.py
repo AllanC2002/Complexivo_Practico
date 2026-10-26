@@ -17,12 +17,10 @@ from sklearn.metrics import (
     confusion_matrix, brier_score_loss
 )
 
-# ============================================================
 # 1. CARGA Y CONFIGURACION
-# ============================================================
 
 BASE_DIR = Path(__file__).resolve().parent
-RUTA_DATOS = BASE_DIR / 'clientes_solicitud_credito_clean.csv'
+RUTA_DATOS = BASE_DIR / 'data' / 'processed' / 'clientes_solicitud_credito_clean.csv'
 
 if not RUTA_DATOS.exists():
     raise FileNotFoundError(
@@ -71,9 +69,7 @@ print("Entrenamiento:", len(X_train))
 print("Prueba:", len(X_test))
 
 
-# ============================================================
 # 2. CALCULO DE IV Y SELECCION DE VARIABLES
-# ============================================================
 
 def calcular_iv(variable, y_entrenamiento):
 
@@ -125,9 +121,7 @@ def seleccionar_top_iv(X_entrenamiento, y_entrenamiento):
     return ordenadas[:NUM_VARIABLES]
 
 
-# ============================================================
 # 3. BINNING OPTIMO Y TRANSFORMACION WoE
-# ============================================================
 
 def transformar_woe(X_ajuste, y_ajuste, X_aplicar, variables):
 
@@ -163,9 +157,7 @@ def transformar_woe(X_ajuste, y_ajuste, X_aplicar, variables):
     return ajuste_woe, aplicar_woe
 
 
-# ============================================================
 # 4. METRICAS
-# ============================================================
 
 def calcular_metricas(y_real, probabilidades):
 
@@ -209,9 +201,7 @@ def calcular_metricas(y_real, probabilidades):
     }
 
 
-# ============================================================
 # 5. MODELOS
-# ============================================================
 
 def crear_modelo(nombre):
 
@@ -283,9 +273,7 @@ METRICAS = [
 ]
 
 
-# ============================================================
 # 6. VALIDACION CRUZADA ESTRATIFICADA DE 10 FOLDS
-# ============================================================
 
 cv = StratifiedKFold(
     n_splits=10,
@@ -363,9 +351,7 @@ for numero_fold, (idx_train, idx_val) in enumerate(
         resultados_cv[nombre].append(metricas)
 
 
-# ============================================================
 # 7. RESUMEN DE VALIDACION CRUZADA
-# ============================================================
 
 filas = []
 
@@ -403,9 +389,7 @@ print(
 )
 
 
-# ============================================================
 # 8. SELECCION DEL MODELO
-# ============================================================
 
 validos = tabla_cv[
     (tabla_cv['Gini_media'] > 0.60)
@@ -452,11 +436,7 @@ else:
 
 print("\nModelo seleccionado:", modelo_elegido)
 
-
-# ============================================================
 # 9. SELECCION FINAL Y ENTRENAMIENTO
-# ============================================================
-
 # Seleccionar las cinco variables usando solo entrenamiento.
 # El conjunto de prueba no interviene en esta seleccion.
 VARIABLES_FINALES = seleccionar_top_iv(
@@ -470,9 +450,7 @@ for variable in VARIABLES_FINALES:
     print("-", variable)
 
 
-# ============================================================
 # 10. EXPORTACION ESTANDARIZADA DE COMPARACION
-# ============================================================
 
 # Cada modelo se identifica con el mismo escenario,
 # cantidad de variables y nombres del conjunto final.
@@ -497,7 +475,7 @@ tabla_cv.insert(
 )
 
 tabla_cv.to_csv(
-    BASE_DIR / 'comparacion_modelos_5_variables.csv',
+    BASE_DIR / 'data' / 'results' / 'comparacion_modelos_5_variables.csv',
     index=False
 )
 
@@ -505,9 +483,7 @@ print("\nComparacion de modelos estandarizada guardada:")
 print("comparacion_modelos_5_variables.csv")
 
 
-# ============================================================
 # 11. ENTRENAMIENTO FINAL
-# ============================================================
 
 X_train_final = X_train[VARIABLES_FINALES]
 X_test_final = X_test[VARIABLES_FINALES]
@@ -546,9 +522,7 @@ else:
     )[:, 1]
 
 
-# ============================================================
 # 12. EVALUACION FINAL EN TEST
-# ============================================================
 
 metricas_test = calcular_metricas(
     y_test,
@@ -565,9 +539,7 @@ for metrica in METRICAS:
     )
 
 
-# ============================================================
 # 13. MATRIZ DE CONFUSION
-# ============================================================
 
 y_pred_test = (
     probabilidades_test >= UMBRAL
@@ -597,10 +569,7 @@ print(
 
 tn, fp, fn, tp = matriz.ravel()
 
-
-# ============================================================
 # 14. EXPORTACION DE METRICAS DE TEST
-# ============================================================
 
 fila_test = {
     'Escenario': '5_variables',
@@ -615,14 +584,11 @@ tabla_test = pd.DataFrame([
 ])
 
 tabla_test.to_csv(
-    BASE_DIR / 'resultados_test_5_variables.csv',
+    BASE_DIR / 'data' / 'results' / 'resultados_test_5_variables.csv',
     index=False
 )
 
-
-# ============================================================
 # 15. EXPORTACION DE MATRIZ DE CONFUSION
-# ============================================================
 
 tabla_matriz = pd.DataFrame([{
     'Escenario': '5_variables',
@@ -634,14 +600,11 @@ tabla_matriz = pd.DataFrame([{
 }])
 
 tabla_matriz.to_csv(
-    BASE_DIR / 'matrices_confusion_5_variables.csv',
+    BASE_DIR / 'data' / 'results' / 'matrices_confusion_5_variables.csv',
     index=False
 )
 
-
-# ============================================================
 # 16. VERIFICACION Y RESUMEN DE ARCHIVOS
-# ============================================================
 
 print("\nArchivos de test guardados:")
 print("- resultados_test_5_variables.csv")

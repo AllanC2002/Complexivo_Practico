@@ -1,1 +1,0 @@
-{"Regresion_Logistica": {"AUC": 0.9818, "Gini": 96.35, "KS": 89.1}, "Random_Forest": {"AUC": 0.9665, "Gini": 93.3, "KS": 85.28}, "XGBoost": {"AUC": 0.9767, "Gini": 95.34, "KS": 85.06999969482422}}

@@ -21,13 +21,10 @@ from sklearn.metrics import (
 )
 from xgboost import XGBClassifier
 
-
-# ============================================================
 # 1. CONFIGURACION
-# ============================================================
 
 BASE_DIR = Path(__file__).resolve().parent
-RUTA_DATOS = BASE_DIR / "clientes_solicitud_credito_clean.csv"
+RUTA_DATOS = BASE_DIR / "data" / "processed" / "clientes_solicitud_credito_clean.csv"
 TARGET = "estado_default"
 UMBRAL = 0.5
 TEST_SIZE = 0.20
@@ -83,10 +80,7 @@ METRICAS = [
 ]
 
 
-# ============================================================
 # 2. CARGA, VALIDACION Y PARTICION DE LOS DATOS
-# ============================================================
-
 if not RUTA_DATOS.exists():
     raise FileNotFoundError(
         f"No se encontro el archivo: {RUTA_DATOS}\n"
@@ -149,9 +143,7 @@ print(f"Tasa de default: {y.mean():.2%}")
 print("Umbral de clasificacion:", UMBRAL)
 
 
-# ============================================================
 # 3. SELECCION POR IV PARA EL ESCENARIO DE CINCO VARIABLES
-# ============================================================
 
 def calcular_iv(variable, y_entrenamiento):
     if variable.nunique() > 10:
@@ -248,9 +240,7 @@ def transformar_woe(X_ajuste, y_ajuste, X_aplicar, variables):
     return ajuste_woe, aplicar_woe
 
 
-# ============================================================
 # 5. DEFINICION DE LOS MODELOS
-# ============================================================
 
 def crear_modelo(nombre):
     if nombre == "Regresion Logistica L1":
@@ -306,9 +296,7 @@ def es_modelo_logistico(nombre):
     return nombre.startswith("Regresion Logistica")
 
 
-# ============================================================
 # 6. METRICAS DE TEST
-# ============================================================
 
 def calcular_metricas(y_real, probabilidades):
     probabilidades = np.asarray(probabilidades)
@@ -330,9 +318,7 @@ def calcular_metricas(y_real, probabilidades):
     }
 
 
-# ============================================================
 # 7. ENTRENAR CADA MODELO Y EVALUARLO EN EL CONJUNTO DE PRUEBA
-# ============================================================
 
 filas_test = []
 filas_matrices = []
@@ -401,9 +387,7 @@ for nombre_escenario, variables in ESCENARIOS.items():
         print(f"  Matriz: TN={tn}, FP={fp}, FN={fn}, TP={tp}")
 
 
-# ============================================================
 # 8. EXPORTAR LOS DOS CSV CONSOLIDADOS
-# ============================================================
 
 tabla_test = pd.DataFrame(filas_test)
 tabla_test = tabla_test.sort_values(
@@ -411,7 +395,7 @@ tabla_test = tabla_test.sort_values(
     ascending=[True, False],
 )
 tabla_test.to_csv(
-    BASE_DIR / "resultados_test_todos_modelos.csv",
+    BASE_DIR / "data" / "results" / "resultados_test_todos_modelos.csv",
     index=False,
 )
 
@@ -420,7 +404,7 @@ tabla_matrices = tabla_matrices.sort_values(
     ["Escenario", "Modelo"]
 )
 tabla_matrices.to_csv(
-    BASE_DIR / "matrices_confusion_todos_modelos.csv",
+    BASE_DIR / "data" / "results" / "matrices_confusion_todos_modelos.csv",
     index=False,
 )
 

@@ -9,9 +9,7 @@ import pandas as pd
 np.random.seed(42)
 n_registros = 50000
 
-# =====================================================================
 # 1. GENERACIÓN DE VARIABLES CON RELACIONES LÓGICAS
-# =====================================================================
 
 # Edad del titular
 edad = np.random.randint(20, 71, n_registros)
@@ -73,9 +71,7 @@ consultas_extra = np.where(
 )
 consultas = consultas_base + consultas_extra
 
-# =====================================================================
 # 2. RIESGO LATENTE Y DEFAULT ESTOCÁSTICO (BERNOULLI)
-# =====================================================================
 
 # Normalización de variables para construir una ecuación de riesgo.
 score_norm = (650 - score) / 100
@@ -150,9 +146,7 @@ df = pd.DataFrame({
     'estado_default': default
 })
 
-# =====================================================================
 # 4. INYECCIÓN CONTROLADA DE NULOS, OUTLIERS E INCONSISTENCIAS
-# =====================================================================
 
 # Valores nulos en variables predictoras
 idx_score_nan = df.sample(frac=0.10, random_state=1).index
@@ -208,11 +202,9 @@ idx_logic_age = df[
 ].sample(10, random_state=12).index
 df.loc[idx_logic_age, 'antiguedad_laboral_meses'] = 240
 
-# =====================================================================
 # 5. EXPORTACIÓN
-# =====================================================================
 
-ruta_salida = 'clientes_solicitud_credito.csv'
+ruta_salida = 'data/raw/clientes_solicitud_credito.csv'
 df.to_csv(ruta_salida, index=False)
 
 print(f'Dataset generado: {ruta_salida}')

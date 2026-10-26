@@ -1,0 +1,48 @@
+﻿Listado de rutas de carpetas
+El n·mero de serie del volumen es 64E6-5B42
+C:.
+|   4models.py
+|   api.py
+|   binners_produccion.joblib
+|   clientes_solicitud_credito.csv
+|   clientes_solicitud_credito_clean.csv
+|   comparacion_modelos_5_variables.csv
+|   comparacion_modelos_6_variables.csv
+|   comparacion_modelos_8_variables.csv
+|   correlacion.py
+|   data.py
+|   diccionario_binning_woe.csv
+|   estructura_proyecto.txt
+|   export_c.py
+|   index.html
+|   iv_seleccion_final.csv
+|   limpieza_c.py
+|   matrices_confusion_5_variables.csv
+|   matrices_confusion_6_variables.csv
+|   matrices_confusion_8_variables.csv
+|   matrices_confusion_todos_modelos.csv
+|   matriz_correlacion.png
+|   metadata_modelo_final.json
+|   model5v.py
+|   model6v.py
+|   model8v.py
+|   modelo_lr_produccion.joblib
+|   modelo_scoring_5_variables_regresion_logistica_l2.joblib
+|   modelo_scoring_5_variables_xgboost.joblib
+|   modelo_scoring_8_variables_regresion_logistica_l2.joblib
+|   modelo_scoring_8_variables_xgboost.joblib
+|   resultados_test_5_variables.csv
+|   resultados_test_6_variables.csv
+|   resultados_test_8_variables.csv
+|   resultados_test_todos_modelos.csv
+|   script.js
+|   style.css
+|   tabla_valores_iv.png
+|   variables_modelo_final.csv
+|   
++---.vscode
+|       settings.json
+|       
+\---__pycache__
+        api.cpython-312.pyc
+        

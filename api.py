@@ -18,12 +18,11 @@ from pydantic import BaseModel, Field
 
 BASE_DIR = Path(__file__).resolve().parent
 # Por defecto intenta cargar primero el modelo XGBoost.
-DEFAULT_ARTIFACT = BASE_DIR / "modelo_scoring_8_variables_xgboost.joblib"
+DEFAULT_ARTIFACT = BASE_DIR / "models" / "modelo_scoring_8_variables_xgboost.joblib"
 
 ARTIFACT_CANDIDATES = [
     DEFAULT_ARTIFACT,
-    BASE_DIR / "modelo_scoring_8_variables_regresion_logistica_l2.joblib",
-    BASE_DIR / "modelo_lr_produccion.joblib",
+    BASE_DIR / "models" / "modelo_scoring_8_variables_regresion_logistica_l2.joblib",
 ]
 
 ruta_configurada = os.getenv("SCORING_MODEL_PATH")
@@ -671,6 +670,7 @@ def predecir_riesgo(cliente: Prospecto):
 # ============================================================
 # 14. INICIO DEL SERVIDOR
 # ============================================================
+cargar_artefactos()
 
 if __name__ == "__main__":
     import uvicorn
@@ -681,7 +681,3 @@ if __name__ == "__main__":
         port=8000,
         reload=False,
     )
-
-
-# Cargar los artefactos una vez definidas todas las funciones.
-cargar_artefactos()
