@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f172a">
+
+  <title>Motor de Decisión | Scoring Crediticio</title>
+
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Librerías para gráficos y lectura de CSV -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+</head>
+
+<body>
+  <div class="app-shell">
+
+    <!-- =====================================================
+         BARRA LATERAL
+    ====================================================== -->
+
+    <aside class="sidebar">
+
+      <a class="brand" href="#inicio" aria-label="Inicio del motor de scoring">
+        <span class="brand-mark">SC</span>
+
+        <span>
+          <strong>ScoreCredit</strong>
+          <small>Motor de decisión</small>
+        </span>
+      </a>
+
+      <div class="sidebar-label">PLATAFORMA</div>
+
+      <nav class="main-nav" aria-label="Navegación principal">
+
+        <button class="tab-btn active" data-tab="tab-datos" type="button">
+          <span class="nav-icon">▦</span>
+          Datos
+        </button>
+
+        <button class="tab-btn" data-tab="tab-modelos" type="button">
+          <span class="nav-icon">◫</span>
+          Modelos
+        </button>
+
+        <button class="tab-btn" data-tab="tab-prediccion" type="button">
+          <span class="nav-icon">⌁</span>
+          Predicción
+        </button>
+
+      </nav>
+
+      <!-- Estado de conexión con FastAPI -->
+
+      <div class="sidebar-bottom">
+        <span class="status-dot" id="api-dot"></span>
+
+        <div>
+          <strong id="api-status">Comprobando API...</strong>
+          <small id="api-status-detail">127.0.0.1:8000</small>
+        </div>
+      </div>
+
+    </aside>
+
+
+    <!-- =====================================================
+         CONTENIDO PRINCIPAL
+    ====================================================== -->
+
+    <main class="main-content">
+
+      <header class="page-header" id="inicio">
+
+        <div>
+          <p class="eyebrow">
+            ANALÍTICA DE RIESGO · MACHINE LEARNING
+          </p>
+
+          <h1>Scoring crediticio</h1>
+
+          <p class="page-subtitle">
+            Exploración de datos, evaluación de modelos y estimación
+            de probabilidad de incumplimiento a 12 meses.
+          </p>
+        </div>
+
+        <div class="header-chip">
+          <span class="pulse-dot"></span>
+          Entorno local de demostración
+        </div>
+
+      </header>
+
+
+      <!-- =====================================================
+           PESTAÑA 1: DATOS
+      ====================================================== -->
+
+      <section id="tab-datos" class="tab-content active">
+
+        <div class="section-heading">
+
+          <div>
+            <h2>Explorador de datos</h2>
+
+            <p>
+              Consulta los archivos del pipeline y revisa la calidad
+              de la información.
+            </p>
+          </div>
+
+          <span class="tag">ETL · Calidad</span>
+
+        </div>
+
+
+        <!-- Indicadores generales del dataset -->
+
+        <div class="kpi-grid data-kpis">
+
+          <article class="kpi-card">
+            <span class="kpi-label">Registros del archivo</span>
+            <strong id="stat-rows">—</strong>
+            <small>Dataset seleccionado</small>
+          </article>
+
+          <article class="kpi-card">
+            <span class="kpi-label">Variables</span>
+            <strong id="stat-columns">—</strong>
+            <small>Columnas detectadas</small>
+          </article>
+
+          <article class="kpi-card">
+            <span class="kpi-label">Valores faltantes</span>
+            <strong id="stat-nulls">—</strong>
+            <small>En el archivo completo</small>
+          </article>
+
+          <article class="kpi-card">
+            <span class="kpi-label">Default observado</span>
+            <strong id="stat-default">—</strong>
+            <small>Disponible si existe el target</small>
+          </article>
+
+        </div>
+
+
+        <!-- Explorador de archivos -->
+
+        <article class="panel">
+
+          <div class="panel-heading">
+
+            <div>
+              <h3>Fuente de datos</h3>
+
+              <p id="dataset-description">
+                Selecciona un archivo para explorarlo.
+              </p>
+            </div>
+
+          </div>
+
+
+          <div class="source-tabs">
+
+            <button
+              class="source-btn active"
+              type="button"
+              data-file="clientes_solicitud_credito.csv"
+              data-kind="raw">
+
+              Data raw
+              <span>Datos originales</span>
+
+            </button>
+
+            <button
+              class="source-btn"
+              type="button"
+              data-file="clientes_solicitud_credito_clean.csv"
+              data-kind="clean">
+
+              Data clean
+              <span>Datos limpiados e imputados</span>
+
+            </button>
+
+            <button
+              class="source-btn"
+              type="button"
+              data-file="diccionario_binning_woe.csv"
+              data-kind="woe">
+
+              Diccionario WoE
+              <span>Intervalos y pesos de evidencia</span>
+
+            </button>
+
+          </div>
+
+
+          <!-- Búsqueda en la tabla -->
+
+          <div class="table-toolbar">
+
+            <label class="search-box" for="table-search">
+
+              <span aria-hidden="true">⌕</span>
+
+              <input
+                id="table-search"
+                type="search"
+                placeholder="Buscar en los registros..."
+                autocomplete="off">
+
+            </label>
+
+            <span class="table-count" id="table-count">
+              Esperando archivo...
+            </span>
+
+          </div>
+
+
+          <!-- Tabla de datos -->
+
+          <div
+            class="table-responsive"
+            id="data-table-container"
+            aria-live="polite">
+
+            <div class="empty-state">
+              Cargando el dataset...
+            </div>
+
+          </div>
+
+
+          <!-- Paginación -->
+
+          <div class="table-pagination">
+
+            <span id="page-info">—</span>
+
+            <div>
+
+              <button
+                class="btn btn-ghost"
+                id="prev-page"
+                type="button"
+                disabled>
+                Anterior
+              </button>
+
+              <button
+                class="btn btn-ghost"
+                id="next-page"
+                type="button"
+                disabled>
+                Siguiente
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <p class="footnote">
+            Los indicadores de calidad se calculan sobre el archivo completo.
+            La tabla permite consultar sus registros de forma paginada.
+          </p>
+
+        </article>
+
+      </section>
+
+
+      <!-- =====================================================
+           PESTAÑA 2: MODELOS
+      ====================================================== -->
+
+      <section id="tab-modelos" class="tab-content">
+
+        <div class="section-heading">
+
+          <div>
+            <h2>Evaluación de modelos</h2>
+
+            <p>
+              Compara los algoritmos mediante validación cruzada
+              estratificada de 10 folds.
+            </p>
+          </div>
+
+          <span class="tag">Validación · K-Fold</span>
+
+        </div>
+
+
+        <!-- Aclaración metodológica 
+
+        <div class="notice notice-info">
+
+          <strong>Fuente de las métricas:</strong>
+
+          Los valores de la comparación corresponden a los promedios
+          de validación cruzada exportados por Python. No deben
+          confundirse con los resultados del conjunto de prueba independiente.
+
+        </div>
+-->
+
+        <!-- Selector del escenario -->
+
+        <div class="scenario-row">
+
+          <div>
+            <strong>Escenario de variables</strong>
+
+            <small>
+              Selecciona el escenario que deseas comparar.
+            </small>
+          </div>
+
+
+          <div
+            class="segmented-control"
+            role="group"
+            aria-label="Escenario de variables">
+
+            <button
+              class="scenario-btn active"
+              type="button"
+              data-scenario="5">
+
+              5 variables
+
+            </button>
+
+            <button
+              class="scenario-btn"
+              type="button"
+              data-scenario="8">
+
+              8 variables
+
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- Métricas del modelo actualmente cargado -->
+
+        <div class="kpi-grid model-kpis">
+
+          <article class="kpi-card">
+
+            <span class="kpi-label">
+              AUC del modelo activo
+            </span>
+
+            <strong id="best-auc">—</strong>
+
+            <small id="best-auc-model">
+              Modelo cargado en FastAPI
+            </small>
+
+          </article>
+
+
+          <article class="kpi-card">
+
+            <span class="kpi-label">
+              Gini del modelo activo
+            </span>
+
+            <strong id="best-gini">—</strong>
+
+            <small>
+              Capacidad discriminatoria
+            </small>
+
+          </article>
+
+
+          <article class="kpi-card">
+
+            <span class="kpi-label">
+              KS del modelo activo
+            </span>
+
+            <strong id="best-ks">—</strong>
+
+            <small>
+              Estadístico en escala 0–100
+            </small>
+
+          </article>
+
+
+          <article class="kpi-card">
+
+            <span class="kpi-label">
+              Brier del modelo activo
+            </span>
+
+            <strong id="best-brier">—</strong>
+
+            <small>
+              Error cuadrático de probabilidades
+            </small>
+
+          </article>
+
+        </div>
+
+
+        <!-- Información del artefacto cargado -->
+
+        <article class="panel model-status-panel">
+
+          <div class="panel-heading">
+
+            <div>
+              <h3>Modelo cargado en la API</h3>
+
+              <p>
+                Información del artefacto utilizado para generar
+                las predicciones.
+              </p>
+            </div>
+
+            <span
+              class="tag tag-muted"
+              id="loaded-model-tag">
+
+              Consultando...
+
+            </span>
+
+          </div>
+
+
+          <div class="loaded-model-grid">
+
+            <div>
+              <span>Algoritmo</span>
+              <strong id="loaded-model-name">—</strong>
+            </div>
+
+            <div>
+              <span>Escenario</span>
+              <strong id="loaded-model-scenario">—</strong>
+            </div>
+
+            <div>
+              <span>Variables utilizadas</span>
+              <strong id="loaded-model-features">—</strong>
+            </div>
+
+            <div>
+              <span>Transformación</span>
+              <strong id="loaded-model-woe">—</strong>
+            </div>
+
+          </div>
+
+        </article>
+
+
+        <!-- Gráficos -->
+
+        <div class="chart-grid">
+
+          <article class="panel">
+
+            <div class="panel-heading">
+
+              <div>
+                <h3>Discriminación</h3>
+                <p>AUC y Gini por algoritmo.</p>
+              </div>
+
+            </div>
+
+            <div class="chart-box">
+              <canvas
+                id="chart-discrimination"
+                aria-label="Comparación de AUC y Gini entre modelos">
+              </canvas>
+            </div>
+
+          </article>
+
+
+          <article class="panel">
+
+            <div class="panel-heading">
+
+              <div>
+                <h3>Detección de incumplimientos</h3>
+
+                <p>
+                  Precision, recall y F1-score según los resultados
+                  de validación cruzada.
+                </p>
+              </div>
+
+            </div>
+
+            <div class="chart-box">
+              <canvas
+                id="chart-classification"
+                aria-label="Comparación de precision, recall y F1">
+              </canvas>
+            </div>
+
+          </article>
+
+        </div>
+
+
+        <!-- Tabla comparativa -->
+
+        <article class="panel">
+
+          <div class="panel-heading">
+
+            <div>
+              <h3>Comparación detallada</h3>
+
+              <p>
+                Métricas medias calculadas por el script de entrenamiento.
+              </p>
+            </div>
+
+            <span
+              class="tag tag-muted"
+              id="cv-source-label">
+
+              Validación cruzada
+
+            </span>
+
+          </div>
+
+
+          <div
+            class="table-responsive"
+            id="model-table-container"
+            aria-live="polite">
+
+            <div class="empty-state">
+              Cargando métricas...
+            </div>
+
+          </div>
+
+
+          <p class="footnote" id="model-load-message">
+            Los archivos comparacion_modelos_5_variables.csv y
+            comparacion_modelos_8_variables.csv deben estar disponibles
+            junto a index.html.
+          </p>
+
+        </article>
+
+
+        <!-- Explicación de los algoritmos -->
+
+        <div class="model-explain-grid">
+
+          <article class="explain-card">
+
+            <span class="explain-icon">σ</span>
+
+            <h3>Regresión Logística L1/L2</h3>
+
+            <p>
+              Modelo de clasificación interpretable. En este proyecto,
+              utiliza binning óptimo y WoE, aprendidos exclusivamente
+              con los datos de entrenamiento de cada fold.
+            </p>
+
+          </article>
+
+
+          <article class="explain-card">
+
+            <span class="explain-icon">🌳</span>
+
+            <h3>Random Forest</h3>
+
+            <p>
+              Combina múltiples árboles de decisión entrenados con
+              muestras y subconjuntos de variables diferentes.
+            </p>
+
+          </article>
+
+
+          <article class="explain-card">
+
+            <span class="explain-icon">↗</span>
+
+            <h3>XGBoost</h3>
+
+            <p>
+              Construye árboles secuencialmente y optimiza una función
+              objetivo para mejorar las predicciones del conjunto.
+            </p>
+
+          </article>
+
+        </div>
+
+      </section>
+
+
+      <!-- =====================================================
+           PESTAÑA 3: PREDICCIÓN
+      ====================================================== -->
+
+      <section id="tab-prediccion" class="tab-content">
+
+        <div class="section-heading">
+
+          <div>
+            <h2>Simulador de originación</h2>
+
+            <p>
+              Envía una solicitud al modelo Python cargado en FastAPI.
+            </p>
+          </div>
+
+          <span class="tag">Inferencia real</span>
+
+        </div>
+
+
+        <!-- Nota sobre las decisiones -->
+
+        <div class="notice notice-warning">
+
+          <strong>Uso demostrativo:</strong>
+
+          Las bandas y decisiones de aprobación son reglas ilustrativas
+          para el ejercicio. No constituyen una política de crédito validada.
+
+        </div>
+
+
+        <div class="prediction-layout">
+
+
+          <!-- Formulario -->
+
+          <article class="panel form-panel">
+
+            <div class="panel-heading">
+
+              <div>
+                <h3>Datos del solicitante</h3>
+
+                <p>
+                  Introduce los valores en las mismas unidades usadas
+                  durante la preparación de los datos.
+                </p>
+              </div>
+
+              <span class="tag tag-muted">Formulario</span>
+
+            </div>
+
+
+            <form id="prediction-form">
+
+              <div class="form-grid">
+
+
+                <div class="form-group">
+
+                  <label for="inp-edad">
+                    Edad del titular (años)
+                  </label>
+
+                  <input
+                    type="number"
+                    id="inp-edad"
+                    name="edad_titular"
+                    min="18"
+                    max="100"
+                    step="1"
+                    value="30"
+                    required>
+
+                </div>
+
+
+                <div class="form-group">
+
+                  <label for="inp-ingreso">
+                    Ingreso mensual (USD)
+                  </label>
+
+                  <input
+                    type="number"
+                    id="inp-ingreso"
+                    name="ingreso_mensual_usd"
+                    min="100"
+                    step="0.01"
+                    value="1500"
+                    required>
+
+                </div>
+
+
+                <div class="form-group">
+
+                  <label for="inp-dti">
+                    Ratio deuda/ingreso (DTI)
+                  </label>
+
+                  <input
+                    type="number"
+                    id="inp-dti"
+                    name="ratio_deuda_ingreso"
+                    min="0"
+                    max="5"
+                    step="0.01"
+                    value="0.35"
+                    required>
+
+                  <small>
+                    Ejemplo: 0.35 representa un ratio del 35 %.
+                  </small>
+
+                </div>
+
+
+                <div class="form-group">
+
+                  <label for="inp-antiguedad">
+                    Antigüedad laboral (meses)
+                  </label>
+
+                  <input
+                    type="number"
+                    id="inp-antiguedad"
+                    name="antiguedad_laboral_meses"
+                    min="0"
+                    step="1"
+                    value="36"
+                    required>
+
+                </div>
+
+
+                <div class="form-group">
+
+                  <label for="inp-consultas">
+                    Consultas al buró (últimos 6 meses)
+                  </label>
+
+                  <input
+                    type="number"
+                    id="inp-consultas"
+                    name="consultas_buro_ultimos_6m"
+                    min="0"
+                    max="100"
+                    step="1"
+                    value="1"
+                    required>
+
+                </div>
+
+
+                <div class="form-group">
+
+                  <label for="inp-mora">
+                    Máxima mora histórica (meses)
+                  </label>
+
+                  <input
+                    type="number"
+                    id="inp-mora"
+                    name="meses_maximo_mora_historica"
+                    min="0"
+                    max="12"
+                    step="1"
+                    value="0"
+                    required>
+
+                </div>
+
+
+                <div class="form-group">
+
+                  <label for="inp-score">
+                    Score de buró (300–850)
+                  </label>
+
+                  <input
+                    type="number"
+                    id="inp-score"
+                    name="score_buro_externo"
+                    min="300"
+                    max="850"
+                    step="1"
+                    value="650"
+                    required>
+
+                </div>
+
+
+                <div class="form-group">
+
+                  <label for="inp-monto">
+                    Monto de crédito solicitado (USD)
+                  </label>
+
+                  <input
+                    type="number"
+                    id="inp-monto"
+                    name="monto_credito_solicitado"
+                    min="0.01"
+                    max="50000"
+                    step="0.01"
+                    value="5000"
+                    required>
+
+                </div>
+
+
+                <!-- Campo mantenido para compatibilidad con modelos anteriores.
+                     El backend utilizará solo las variables requeridas
+                     por el artefacto actualmente cargado. -->
+
+                <div class="form-group form-group-legacy">
+
+                  <label for="inp-vivienda">
+                    Tipo de vivienda
+                    <span>Campo adicional para modelos compatibles</span>
+                  </label>
+
+                  <select
+                    id="inp-vivienda"
+                    name="tipo_vivienda">
+
+                    <option value="propia">Propia</option>
+                    <option value="alquilada">Alquilada</option>
+                    <option value="familiar">Familiar</option>
+
+                  </select>
+
+                </div>
+
+
+              </div>
+
+
+              <!-- Botones -->
+
+              <div class="form-actions">
+
+                <button
+                  class="btn btn-primary"
+                  type="submit"
+                  id="predict-button">
+
+                  <span>Calcular probabilidad</span>
+                  <span aria-hidden="true">→</span>
+
+                </button>
+
+                <button
+                  class="btn btn-ghost"
+                  type="reset"
+                  id="reset-form">
+
+                  Restablecer
+
+                </button>
+
+              </div>
+
+
+              <p
+                class="form-feedback"
+                id="form-feedback"
+                aria-live="polite">
+              </p>
+
+            </form>
+
+          </article>
+
+
+          <!-- Resultado -->
+
+          <aside class="result-column">
+
+
+            <article
+              class="panel result-panel empty-result"
+              id="result-panel"
+              aria-live="polite">
+
+              <div class="result-placeholder">
+
+                <span class="result-symbol">%</span>
+
+                <h3>Esperando una solicitud</h3>
+
+                <p>
+                  Completa los campos y ejecuta el modelo para consultar
+                  la probabilidad de incumplimiento estimada a 12 meses.
+                </p>
+
+              </div>
+
+            </article>
+
+
+            <!-- Referencia de bandas -->
+
+            <article class="panel threshold-panel">
+
+              <h3>Referencia de bandas de riesgo</h3>
+
+
+              <div class="threshold-line">
+
+                <span class="risk-dot risk-a"></span>
+
+                <div>
+                  <strong>A · Menor al 5 %</strong>
+                  <small>Riesgo muy bajo · Regla demostrativa</small>
+                </div>
+
+              </div>
+
+
+              <div class="threshold-line">
+
+                <span class="risk-dot risk-b"></span>
+
+                <div>
+                  <strong>B · Del 5 % al 12 %</strong>
+                  <small>Riesgo moderado · Regla demostrativa</small>
+                </div>
+
+              </div>
+
+
+              <div class="threshold-line">
+
+                <span class="risk-dot risk-c"></span>
+
+                <div>
+                  <strong>C · Del 12 % al 25 %</strong>
+                  <small>Riesgo alto · Regla demostrativa</small>
+                </div>
+
+              </div>
+
+
+              <div class="threshold-line">
+
+                <span class="risk-dot risk-d"></span>
+
+                <div>
+                  <strong>D · 25 % o más</strong>
+                  <small>Riesgo muy alto · Regla demostrativa</small>
+                </div>
+
+              </div>
+
+
+              <p class="footnote">
+                El umbral binario del modelo (por defecto, 50 %) es diferente
+                de los cortes utilizados para asignar las bandas. La clasificación
+                binaria no equivale por sí sola a una decisión crediticia.
+              </p>
+
+            </article>
+
+          </aside>
+
+        </div>
+
+      </section>
+
+
+      <!-- =====================================================
+           PIE DE PÁGINA
+      ====================================================== -->
+
+      <footer class="page-footer">
+
+        <span>
+          Motor de Scoring Crediticio · Proyecto académico
+        </span>
+
+        <span>
+          Las métricas y predicciones deben interpretarse según su fuente
+          y conjunto de evaluación.
+        </span>
+
+      </footer>
+
+    </main>
+
+  </div>
+
+
+  <!-- Lógica del dashboard -->
+  <script src="script.js"></script>
+
+</body>
+</html>

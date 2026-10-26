@@ -1,0 +1,17 @@
+Escenario,Modelo,Numero_variables,Variables,TN,FP,FN,TP
+5_variables,Random Forest,5,"meses_maximo_mora_historica, score_buro_externo, consultas_buro_ultimos_6m, ratio_deuda_ingreso, antiguedad_laboral_meses",8567,212,616,595
+5_variables,Regresion Logistica L1,5,"meses_maximo_mora_historica, score_buro_externo, consultas_buro_ultimos_6m, ratio_deuda_ingreso, antiguedad_laboral_meses",8548,231,611,600
+5_variables,Regresion Logistica L2,5,"meses_maximo_mora_historica, score_buro_externo, consultas_buro_ultimos_6m, ratio_deuda_ingreso, antiguedad_laboral_meses",8548,231,611,600
+5_variables,XGBoost,5,"meses_maximo_mora_historica, score_buro_externo, consultas_buro_ultimos_6m, ratio_deuda_ingreso, antiguedad_laboral_meses",8548,231,577,634
+6A_sin_ingreso_con_monto,Random Forest,6,"ratio_deuda_ingreso, meses_maximo_mora_historica, score_buro_externo, antiguedad_laboral_meses, consultas_buro_ultimos_6m, monto_credito_solicitado",8591,188,632,579
+6A_sin_ingreso_con_monto,Regresion Logistica L1,6,"ratio_deuda_ingreso, meses_maximo_mora_historica, score_buro_externo, antiguedad_laboral_meses, consultas_buro_ultimos_6m, monto_credito_solicitado",8554,225,606,605
+6A_sin_ingreso_con_monto,Regresion Logistica L2,6,"ratio_deuda_ingreso, meses_maximo_mora_historica, score_buro_externo, antiguedad_laboral_meses, consultas_buro_ultimos_6m, monto_credito_solicitado",8554,225,606,605
+6A_sin_ingreso_con_monto,XGBoost,6,"ratio_deuda_ingreso, meses_maximo_mora_historica, score_buro_externo, antiguedad_laboral_meses, consultas_buro_ultimos_6m, monto_credito_solicitado",8550,229,562,649
+6B_con_ingreso_sin_monto,Random Forest,6,"ratio_deuda_ingreso, meses_maximo_mora_historica, score_buro_externo, antiguedad_laboral_meses, consultas_buro_ultimos_6m, ingreso_mensual_usd",8585,194,634,577
+6B_con_ingreso_sin_monto,Regresion Logistica L1,6,"ratio_deuda_ingreso, meses_maximo_mora_historica, score_buro_externo, antiguedad_laboral_meses, consultas_buro_ultimos_6m, ingreso_mensual_usd",8543,236,606,605
+6B_con_ingreso_sin_monto,Regresion Logistica L2,6,"ratio_deuda_ingreso, meses_maximo_mora_historica, score_buro_externo, antiguedad_laboral_meses, consultas_buro_ultimos_6m, ingreso_mensual_usd",8543,236,606,605
+6B_con_ingreso_sin_monto,XGBoost,6,"ratio_deuda_ingreso, meses_maximo_mora_historica, score_buro_externo, antiguedad_laboral_meses, consultas_buro_ultimos_6m, ingreso_mensual_usd",8550,229,579,632
+8_variables,Random Forest,8,"edad_titular, ingreso_mensual_usd, ratio_deuda_ingreso, antiguedad_laboral_meses, consultas_buro_ultimos_6m, meses_maximo_mora_historica, score_buro_externo, monto_credito_solicitado",8630,149,672,539
+8_variables,Regresion Logistica L1,8,"edad_titular, ingreso_mensual_usd, ratio_deuda_ingreso, antiguedad_laboral_meses, consultas_buro_ultimos_6m, meses_maximo_mora_historica, score_buro_externo, monto_credito_solicitado",8554,225,603,608
+8_variables,Regresion Logistica L2,8,"edad_titular, ingreso_mensual_usd, ratio_deuda_ingreso, antiguedad_laboral_meses, consultas_buro_ultimos_6m, meses_maximo_mora_historica, score_buro_externo, monto_credito_solicitado",8554,225,603,608
+8_variables,XGBoost,8,"edad_titular, ingreso_mensual_usd, ratio_deuda_ingreso, antiguedad_laboral_meses, consultas_buro_ultimos_6m, meses_maximo_mora_historica, score_buro_externo, monto_credito_solicitado",8577,202,557,654

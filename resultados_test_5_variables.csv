@@ -1,0 +1,2 @@
+Escenario,Modelo,Numero_variables,Variables,AUC,Gini,KS,Accuracy,Precision,Recall,F1,Brier
+5_variables,Regresion Logistica L2,5,"meses_maximo_mora_historica, score_buro_externo, consultas_buro_ultimos_6m, ratio_deuda_ingreso, antiguedad_laboral_meses",0.9164007476365461,0.8328014952730922,67.59998641755357,0.9157157157157158,0.7220216606498195,0.495458298926507,0.5876591576885406,0.06296255830058664

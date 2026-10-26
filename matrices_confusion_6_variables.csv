@@ -1,0 +1,3 @@
+Escenario,Modelo,TN,FP,FN,TP
+6A_sin_ingreso_con_monto,Regresion Logistica L2,8554,225,606,605
+6B_con_ingreso_sin_monto,Regresion Logistica L2,8543,236,606,605

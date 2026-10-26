@@ -1,0 +1,2 @@
+Escenario,Modelo,TN,FP,FN,TP
+8_variables,Regresion Logistica L2,8554,225,603,608

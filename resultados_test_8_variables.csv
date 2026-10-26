@@ -1,0 +1,2 @@
+Escenario,Modelo,Numero_variables,Variables,AUC,Gini,KS,Accuracy,Precision,Recall,F1,Brier
+8_variables,Regresion Logistica L2,8,"edad_titular, ingreso_mensual_usd, ratio_deuda_ingreso, antiguedad_laboral_meses, consultas_buro_ultimos_6m, meses_maximo_mora_historica, score_buro_externo, monto_credito_solicitado",0.9233899698147999,0.8467799396295999,69.57897896310438,0.9171171171171171,0.7298919567827131,0.5020644095788604,0.5949119373776908,0.061217700120152825
